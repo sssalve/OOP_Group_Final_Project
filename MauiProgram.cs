@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using OOP_Group_Final_Project.Services;
 
 namespace OOP_Group_Final_Project
 {
@@ -18,7 +19,9 @@ namespace OOP_Group_Final_Project
 
 #if DEBUG
     		builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
+			// add services
+			builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
+			builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

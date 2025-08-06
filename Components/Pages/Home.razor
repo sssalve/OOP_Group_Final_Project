@@ -1,9 +1,157 @@
 ﻿@page "/"
+@using OOP_Group_Final_Project.Services
+@inject IEmployeeService EmployeeService
+<div class="employee-page">
+    <div class="header">
+        <h3>Employee Management</h3>
+        <button class="btn btn-primary" @onclick="AddNewEmployee">
+            Add New Employee
+        </button>
+    </div>
 
-<h1>Hello, world!</h1>
+    <div class="employee-container">
+        <!-- List All Employees -->
+        <div class="employee-list">
+            <h4>Employees</h4>
+            @if (employees == null)
+            {
+                <p>Loading employees...</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var emp in employees)
+                    {
+                        <li @onclick="() => SelectEmployee(emp)" 
+                            class="@(selectedEmployee?.EmployeeID == emp.EmployeeID ? "selected" : "")">
+                            @emp.FirstName @emp.LastName
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
 
-Welcome to your new app.
+        <!-- Display Employee Details -->
+        <div class="employee-details">
+            @if (isAddingNew)
+            {
+                <h4>Add New Employee</h4>
+                <EditForm Model="newEmployee" OnValidSubmit="SaveNewEmployee">
+                    <div class="form-group">
+                        <label>First Name:</label>
+                        <InputText @bind-Value="newEmployee.FirstName" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name:</label>
+                        <InputText @bind-Value="newEmployee.LastName" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Position:</label>
+                        <InputText @bind-Value="newEmployee.Position" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <InputText @bind-Value="newEmployee.Email" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CancelAddNew">Cancel</button>
+                </EditForm>
+            }
+            else if (selectedEmployee != null)
+            {
+                <h4>Employee Details</h4>
+                <div class="detail-group">
+                    <label>ID:</label>
+                    <div>@selectedEmployee.EmployeeID</div>
+                </div>
+                <div class="detail-group">
+                    <label>First Name:</label>
+                    <div>@selectedEmployee.FirstName</div>
+                </div>
+                <div class="detail-group">
+                    <label>Last Name:</label>
+                    <div>@selectedEmployee.LastName</div>
+                </div>
+                <div class="detail-group">
+                    <label>Position:</label>
+                    <div>@selectedEmployee.Position</div>
+                </div>
+                <div class="detail-group">
+                    <label>Email:</label>
+                    <div>@selectedEmployee.Email</div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" @onclick="StartUpdate">Update Employee</button>
+                    <button class="btn btn-danger" @onclick="DeleteEmployee">Delete Employee</button>
+                </div>
+            }
+            else
+            {
+                <p>Select an employee to view details</p>
+            }
+        </div>
+    </div>
+</div>
+@code {
+    private List<Employee> employees;
+    private Employee selectedEmployee;
+    private bool isAddingNew = false;
+    private Employee newEmployee = new Employee();
+    private bool isUpdating = false;
 
-<!--Bootstrap Tests-->
-<button class="btn btn-primary">Test bootstrap button</button>
-<i class="bi-people-fill"></i>
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await EmployeeService.GetAllEmployeesAsync();
+    }
+
+    private void SelectEmployee(Employee employee)
+    {
+        selectedEmployee = employee;
+        isAddingNew = false;
+        isUpdating = false;
+    }
+
+    private void AddNewEmployee()
+    {
+        newEmployee = new Employee();
+        isAddingNew = true;
+        selectedEmployee = null;
+        isUpdating = false;
+    }
+
+    private async Task SaveNewEmployee()
+    {
+        await EmployeeService.AddEmployeeAsync(newEmployee);
+        employees = await EmployeeService.GetAllEmployeesAsync();
+        isAddingNew = false;
+    }
+
+    private void CancelAddNew()
+    {
+        isAddingNew = false;
+    }
+
+    private void StartUpdate()
+    {
+        isUpdating = true;
+        newEmployee = new Employee
+        {
+            EmployeeID = selectedEmployee.EmployeeID,
+            FirstName = selectedEmployee.FirstName,
+            LastName = selectedEmployee.LastName,
+            Position = selectedEmployee.Position,
+            Email = selectedEmployee.Email
+        };
+    }
+
+    private async Task DeleteEmployee()
+    {
+        if (selectedEmployee != null)
+        {
+            await EmployeeService.DeleteEmployeeAsync(selectedEmployee.EmployeeID);
+            employees = await EmployeeService.GetAllEmployeesAsync();
+            selectedEmployee = null;
+        }
+    }
+}
