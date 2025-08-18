@@ -15,7 +15,7 @@
         public string Email { get; set; } = string.Empty;
 
         public int Performance { get; set; }
-        public DateTime DateHired { get; set; }
+        public DateTime DateHired { get; set; } = DateTime.Today;
         public DateTime? DateDeparted { get; set; }
 
     }
