@@ -20,8 +20,8 @@
             _employees.Clear();
             _employees = new List<Employee>
             {
-                new() {EmployeeID = _nextId++, FirstName = "John", LastName = "Doe", Position = "Dev", Email = "legitemail@real.com", Performance = 4, DateHired = new DateTime(2023, 09, 23), DateDeparted = null},
-                new() {EmployeeID = _nextId++, FirstName = "Jane", LastName = "Smith", Position = "Dev", Email = "xXn00bDestroyerXx@gamer.com", Performance = 2, DateHired = new DateTime(2021, 01, 10), DateDeparted = new DateTime(2021, 06, 10) }
+                new() {EmployeeID = _nextId++, FirstName = "John", LastName = "Doe", Position = "Dev", Salary = 85000, Email = "legitemail@real.com", Performance = 4, DateHired = new DateTime(2023, 09, 23), DateDeparted = null},
+                new() {EmployeeID = _nextId++, FirstName = "Jane", LastName = "Smith", Position = "Dev", Salary = 85000,  Email = "xXn00bDestroyerXx@gamer.com", Performance = 2, DateHired = new DateTime(2021, 01, 10), DateDeparted = new DateTime(2021, 06, 10) }
             };
         }
 
@@ -57,6 +57,7 @@
                 existing.FirstName = employee.FirstName;
                 existing.LastName = employee.LastName;
                 existing.Position = employee.Position;
+                existing.Salary = employee.Salary;
                 existing.Email = employee.Email;
                 if (employee.Performance is < 1 or > 5)
                     throw new ArgumentOutOfRangeException(nameof(employee.Performance), "Performance must be 1–5.");

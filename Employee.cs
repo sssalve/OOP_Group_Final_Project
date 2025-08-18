@@ -10,6 +10,8 @@
 
         public string Position { get; set; } = string.Empty;
 
+        public decimal Salary { get; set; }
+
         public string Email { get; set; } = string.Empty;
 
         public int Performance { get; set; }
