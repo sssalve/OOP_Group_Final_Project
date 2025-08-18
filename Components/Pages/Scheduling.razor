@@ -1,0 +1,290 @@
+﻿@page "/scheduling"
+@layout Layout.MainLayout
+@using OOP_Group_Final_Project
+@using OOP_Group_Final_Project.Services
+@inject IEmployeeService EmployeeService
+@inject IScheduleService ScheduleService
+
+<div class="scheduling-page">
+    <h2>Employee Scheduling</h2>
+    
+    <div class="calendar-controls">
+        <button class="btn btn-outline-primary" @onclick="() => ChangeMonth(-1)">
+            &lt; Previous
+        </button>
+        <h4>@currentMonth.ToString("MMMM yyyy")</h4>
+        <button class="btn btn-outline-primary" @onclick="() => ChangeMonth(1)">
+            Next &gt;
+        </button>
+    </div>
+
+    <div class="calendar">
+        @foreach (var day in visibleDays)
+        {
+            <div class="day-cell @(day.Date == DateTime.Today ? "today" : "") 
+                   @(day.IsCurrentMonth ? "current-month" : "other-month")">
+                <div class="day-header">@day.Day</div>
+                <div class="day-number">@day.Date.Day</div>
+                
+                <div class="assignments">
+                    @foreach (var assignment in GetAssignmentsForDate(day.Date))
+                    {
+                        var employee = availableEmployees.FirstOrDefault(e => e.EmployeeID == assignment.EmployeeId);
+                        @if (employee != null)
+                        {
+                            <div class="employee-tag @assignment.ShiftType?.ToLower()">
+                                <span>@employee.FirstName (@assignment.ShiftType)</span>
+                                <button class="delete-btn"
+                                        @onclick="() => ShowDeleteConfirmation(assignment, employee)"
+                                        title="Remove assignment">
+                                    ×
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
+                
+                <button class="btn btn-sm btn-outline-secondary add-btn" 
+                        @onclick="() => ShowAddDialog(day.Date)">
+                    +
+                </button>
+            </div>
+        }
+    </div>
+
+    <!-- Add Assignment Dialog -->
+    @if (showAddDialog)
+    {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h4>Add Employee to @selectedDate?.ToString("MMMM d, yyyy")</h4>
+                
+                <div class="form-group">
+                    <label>Employee:</label>
+                    <div class="employee-select">
+                        @foreach (var emp in availableEmployees)
+                        {
+                            <div class="employee-option @(selectedEmployee?.EmployeeID == emp.EmployeeID ? "selected" : "")"
+                                 @onclick="() => SelectEmployeeForAssignment(emp)">
+                                @emp.FirstName @emp.LastName
+                            </div>
+                        }
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Shift Type:</label>
+                    <select class="form-control" @bind="newShiftType">
+                        <option value="Morning">Morning (8AM-12PM)</option>
+                        <option value="Afternoon">Afternoon (1PM-5PM)</option>
+                        <option value="Full">Full Day (8AM-5PM)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Notes:</label>
+                    <input class="form-control" @bind="newNotes" placeholder="Optional notes" />
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" @onclick="CloseAddDialog">Cancel</button>
+                    <button class="btn btn-primary" @onclick="AddAssignment" disabled="@(selectedEmployee == null)">
+                        Assign
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+    <!-- Delete Assignment Dialog -->
+@if (showDeleteConfirmation)
+{
+    <div class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px;">
+            <h4>Confirm Removal</h4>
+            <p>Remove @confirmEmployeeName from @confirmDate.ToString("MMMM d")?</p>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" @onclick="CancelDelete">Cancel</button>
+                <button class="btn btn-danger" @onclick="ConfirmDelete">
+                    <span class="bi bi-trash"></span> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+</div>
+
+
+@code {
+    private DateTime currentMonth = DateTime.Today;
+    private List<CalendarDay> visibleDays = new();
+    private List<Employee> availableEmployees = new();
+    private Dictionary<DateTime, List<Schedule>> schedulesByDate = new();
+
+    // Dialog state
+    private bool showAddDialog = false;
+    private DateTime? selectedDate;
+    private Employee? selectedEmployee;
+    private string newShiftType = "Morning";
+    private string newNotes = "";
+    // Delete Dialog
+    private bool showDeleteConfirmation = false;
+    private Schedule? assignmentToDelete;
+    private string confirmEmployeeName = "";
+    private DateTime confirmDate;
+
+    // initialization
+    protected override async Task OnInitializedAsync()
+    {
+        availableEmployees = await EmployeeService.GetAllEmployeesAsync();
+
+        // preload all schedules for the current month
+        await LoadSchedulesForMonth(currentMonth);
+        GenerateCalendarDays();
+    }
+
+    private async Task LoadSchedulesForMonth(DateTime month)
+    {
+        var firstDay = new DateTime(month.Year, month.Month, 1);
+        var lastDay = firstDay.AddMonths(1).AddDays(-1);
+
+        // clear existing data
+        schedulesByDate.Clear();
+
+        // get all schedules for the month
+        var allSchedules = await ScheduleService.GetSchedulesAsync();
+
+        // organize by date
+        foreach (var schedule in allSchedules)
+        {
+            if (!schedulesByDate.ContainsKey(schedule.Date.Date))
+            {
+                schedulesByDate[schedule.Date.Date] = new List<Schedule>();
+            }
+            schedulesByDate[schedule.Date.Date].Add(schedule);
+        }
+    }
+
+    private List<Schedule> GetAssignmentsForDate(DateTime date)
+    {
+        // get schedules for the specific date
+        return schedulesByDate.TryGetValue(date.Date, out var assignments)
+            ? assignments
+            : new List<Schedule>();
+    }
+
+    private void GenerateCalendarDays()
+    {
+        // clear previous days
+        visibleDays.Clear();
+
+        var firstDayOfMonth = new DateTime(currentMonth.Year, currentMonth.Month, 1);
+        var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+        // add days from previous month to fill the first week
+        var startDate = firstDayOfMonth.AddDays(-(int)firstDayOfMonth.DayOfWeek);
+
+        // add days until weve shown 6 weeks (42 days) to keep calendar size consistent
+        for (int i = 0; i < 42; i++)
+        {
+            var date = startDate.AddDays(i);
+            visibleDays.Add(new CalendarDay {
+                Date = date,
+                Day = date.ToString("ddd"),
+                IsCurrentMonth = date.Month == currentMonth.Month
+            });
+        }
+    }
+
+    // move the calendar
+    private void ChangeMonth(int months)
+    {
+        currentMonth = currentMonth.AddMonths(months);
+        GenerateCalendarDays();
+    }
+
+    // delete assignment
+    private async Task RemoveAssignment(Schedule assignment)
+    {
+        await ScheduleService.DeleteScheduleAsync(assignment.Id);
+        StateHasChanged(); // refresh the UI
+    }
+
+    // show add dialog
+    private void ShowAddDialog(DateTime date)
+    {
+        selectedDate = date;
+        selectedEmployee = null;
+        newShiftType = "Morning";
+        newNotes = "";
+        showAddDialog = true;
+    }
+
+    // close add dialog
+    private void CloseAddDialog()
+    {
+        showAddDialog = false;
+        selectedDate = null;
+        selectedEmployee = null;
+    }
+
+    // select employee for assignment
+    private void SelectEmployeeForAssignment(Employee employee)
+    {
+        selectedEmployee = employee;
+    }
+
+    private async Task AddAssignment()
+    {
+        if (selectedDate == null || selectedEmployee == null) return;
+
+        // create new schedule assignment
+        var newSchedule = new Schedule {
+            Date = selectedDate.Value,
+            EmployeeId = selectedEmployee.EmployeeID,
+            ShiftType = newShiftType,
+            Notes = newNotes
+        };
+
+        // add the assignemnt 
+        await ScheduleService.AddScheduleAsync(newSchedule);
+        await LoadSchedulesForMonth(currentMonth);
+
+        CloseAddDialog();
+        StateHasChanged(); // refresh the calendar
+    }
+
+    private void ShowDeleteConfirmation(Schedule assignment, Employee employee)
+    {
+        assignmentToDelete = assignment;
+        confirmEmployeeName = employee.FirstName;
+        confirmDate = assignment.Date;
+        showDeleteConfirmation = true;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirmation = false;
+        assignmentToDelete = null;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        // delete the assignment
+        if (assignmentToDelete != null)
+        {
+            await ScheduleService.DeleteScheduleAsync(assignmentToDelete.Id);
+            await LoadSchedulesForMonth(currentMonth);
+            StateHasChanged();
+        }
+        showDeleteConfirmation = false;
+    }
+
+    private class CalendarDay
+    {
+        public DateTime Date { get; set; }
+        public string Day { get; set; } = "";
+        public bool IsCurrentMonth { get; set; }
+    }
+}

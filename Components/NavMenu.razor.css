@@ -1,0 +1,27 @@
+﻿.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px !important;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+    .nav-link:hover {
+        background-color: rgba(255,255,255,0.1);
+    }
+
+    .nav-link.active {
+        background-color: rgba(255,255,255,0.15);
+        font-weight: 500;
+    }

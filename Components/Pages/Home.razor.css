@@ -1,220 +1,26 @@
-﻿/* main settings */
-:root {
-    --bg: #eef2f6; /* page background */
-    --card: #ffffff; /* surfaces */
-    --border: #e5e7eb;
-    --text: #111827;
-    --muted: #6b7280;
-    --primary: #635bff; /* brand color */
-    --primary-700: #564dff;
-    --shadow: 0 6px 22px rgba(0,0,0,.08);
-    --radius: 14px;
-    --bs-primary: var(--primary);
-    --bs-primary-rgb: 99, 91, 255;
-}
-
-/* Make the canvas actually use the background */
-html, body {
-    background: var(--bg);
-}
-
-.employee-page {
+﻿.main-menu {
+    padding: 20px;
     max-width: 1200px;
-    margin: 24px auto;
-    padding: 0 16px;
-    background: #eef2f6;
+    margin: 0 auto;
 }
 
-/* header */
-.header {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 18px 20px;
-    box-shadow: 0 6px 22px rgba(0,0,0,.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
+.menu-card {
+    height: 100%;
+    transition: transform 0.2s;
+    margin-bottom: 20px;
 }
 
-.employee-container {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 20px;
-}
-
-.employee-list, .employee-details {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    padding: 12px 18px;
-}
-
-/* search and list of employees */
-.list-search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 10px;
-    margin: 6px 6px 10px;
-    border: 1px solid 0 6px 22px rgba(0,0,0,.08);
-    border-radius: 10px;
-    background: #f8fafc;
-}
-
-    .list-search input {
-        border: none;
-        outline: none;
-        flex: 1;
-        background: transparent;
-        color: #111827;
+    .menu-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-.employee-list ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-height: 70vh;
-    overflow: auto;
-}
-
-.employee-list li {
-    display: grid;
-    grid-template-columns: 40px 1fr 14px;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-    .employee-list li:hover {
-        background: #f3f4f6;
+    .menu-card .card-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .employee-list li.selected {
-        background: #e9e5ff;
+    .menu-card .bi {
+        font-size: 1.5rem;
     }
-
-.avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: #dbeafe;
-    color: #1e40af;
-    font-weight: 700;
-}
-
-.name {
-    color: #111827;
-    font-weight: 600;
-    line-height: 1.15;
-}
-
-.sub {
-    color: #6b7280;
-    font-size: .88rem;
-}
-
-.status-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    box-shadow: 0 0 0 2px #fff;
-}
-
-    .status-dot.active {  /*green for still employeed*/
-        background: #16a34a;
-    }
-
-    .status-dot.departed { /*red dot for departed */
-        background: #ca5f5f;
-    }
-
-
-/* SECTIONS / GRID */
-.section {
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-    margin-top: 12px;
-}
-
-    .section:first-child {
-        border-top: none;
-        padding-top: 0;
-        margin-top: 0;
-    }
-
-    .section h4 {
-        margin: 0 0 12px;
-        color: #111827;
-    }
-
-.detail-grid {
-    display: grid;
-    gap: 14px;
-    grid-template-columns: repeat(2, minmax(0,1fr));
-}
-
-.detail-group label {
-    color: #6b7280;
-    font-size: .9rem;
-    display: block;
-    margin-bottom: 6px;
-}
-
-.detail-group > div, .form-control {
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 10px 12px;
-}
-
-/*  Add/Save butons */
-.employee-page .btn {
-    padding: 10px 14px;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    cursor: pointer;
-}
-
-    .employee-page .btn.btn-primary {
-        background: #635bff !important;
-        border-color: #635bff !important;
-        color: #fff !important;
-    }
-
-        .employee-page .btn.btn-primary:hover {
-            transform: scale(1.1);
-            background: #4b42ff
-        }
-
-    .employee-page .btn.btn-secondary {
-        background: #eef0f3;
-        color: #635bff;
-    }
-
-        .employee-page .btn.btn-secondary:hover {
-            transform: scale(1.1);
-            background: #dfe3e8;
-        }
-
-    .employee-page .btn.btn-delete {
-        background: #ef4444;
-        color: #fff;
-    }
-
-        .employee-page .btn.btn-delete:hover {
-            transform: scale(1.1);
-            background: #ed2d2d;
-        }
-
-/* Responsive */
-@media (max-width:900px) {
-    .employee-container {
-        grid-template-columns: 1fr;
-    }
-}

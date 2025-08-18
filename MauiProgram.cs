@@ -28,7 +28,8 @@ namespace OOP_Group_Final_Project
             builder.Services.AddBlazorWebViewDeveloperTools();
             // add services
             builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
-            builder.Logging.AddDebug();
+			builder.Services.AddSingleton<IScheduleService, ScheduleService>();
+			builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
