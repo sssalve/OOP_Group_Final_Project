@@ -1,67 +1,26 @@
-﻿.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+﻿.main-menu {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.menu-card {
+    height: 100%;
+    transition: transform 0.2s;
     margin-bottom: 20px;
 }
 
-.employee-container {
-    display: flex;
-    gap: 20px;
-}
-
-.employee-list {
-    width: 300px;
-    border-right: 1px solid #ddd;
-    padding-right: 20px;
-}
-
-    .employee-list ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+    .menu-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-    .employee-list li {
-        padding: 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
+    .menu-card .card-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-        .employee-list li:hover {
-            background-color: #f5f5f5;
-        }
-
-        .employee-list li.selected {
-            background-color: #e0f7fa;
-            font-weight: bold;
-        }
-
-.employee-details {
-    flex: 1;
-}
-
-.detail-group {
-    margin-bottom: 15px;
-}
-
-    .detail-group label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 5px;
-    }
-
-.button-group {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
+    .menu-card .bi {
+        font-size: 1.5rem;
     }

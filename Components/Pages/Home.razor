@@ -1,193 +1,32 @@
-﻿@page "/"  
-<!--once we decide how to call the page we need to add a name -->
-@using OOP_Group_Final_Project
-@using OOP_Group_Final_Project.Services
-@inject IEmployeeService EmployeeService
+﻿@page "/"
+@layout Layout.MainLayout
 
-<div class="employee-page">
-    <div class="header">
-        <h3>Employee Management</h3>
-        <button class="btn btn-primary" @onclick="AddNewEmployee">
-            Add New Employee
-        </button>
-    </div>
+<div class="main-menu">
+    <h1 class="display-5 mb-4">Welcome to the Management System</h1>
 
-    <div class="employee-container">
-        <!-- List All Employees -->
-        <div class="employee-list">
-            <h4>Employees</h4>
-            @if (employees == null)
-            {
-                <p>Loading employees...</p>
-            }
-            else
-            {
-                <ul>
-                    @foreach (var emp in employees)
-                    {
-                        <li @onclick="() => SelectEmployee(emp)" 
-                            class="@(selectedEmployee?.EmployeeID == emp.EmployeeID ? "selected" : "")">
-                            @emp.FirstName @emp.LastName
-                        </li>
-                    }
-                </ul>
-            }
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card menu-card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <span class="bi bi-people-fill"></span> Employee Management
+                    </h5>
+                    <p class="card-text">Manage your employee database, view details, and make updates.</p>
+                    <a href="/Employees" class="btn btn-primary">Go to Employees</a>
+                </div>
+            </div>
         </div>
 
-        <!-- Display Employee Details -->
-        <div class="employee-details">
-            @if (isAddingNew)
-            {
-                <h4>Add New Employee</h4>
-                <EditForm Model="newEmployee" OnValidSubmit="SaveNewEmployee">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-
-                    <div class="form-group">
-                        <label>First Name:</label>
-                        <InputText @bind-Value="newEmployee.FirstName" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Last Name:</label>
-                        <InputText @bind-Value="newEmployee.LastName" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Position:</label>
-                        <InputText @bind-Value="newEmployee.Position" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Salary:</label>
-                        <InputNumber @bind-Value="newEmployee.Salary" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Email:</label>
-                        <InputText @bind-Value="newEmployee.Email" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Performance (1–5):</label>
-                        <InputNumber @bind-Value="newEmployee.Performance" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Hiring date:</label>
-                        <InputDate @bind-Value="newEmployee.DateHired" class="form-control" />
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-secondary" @onclick="CancelAddNew">Cancel</button>
-                </EditForm>
-            }
-            else if (selectedEmployee != null)
-            {
-                <h4>Employee Details</h4>
-                <div class="detail-group">
-                    <label>ID:</label>
-                    <div>@selectedEmployee.EmployeeID</div>
+        <div class="col-md-6">
+            <div class="card menu-card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <span class="bi bi-calendar-week-fill"></span> Scheduling
+                    </h5>
+                    <p class="card-text">Create and manage employee schedules and shifts.</p>
+                    <a href="/scheduling" class="btn btn-primary">Go to Scheduling</a>
                 </div>
-                <div class="detail-group">
-                    <label>First Name:</label>
-                    <div>@selectedEmployee.FirstName</div>
-                </div>
-                <div class="detail-group">
-                    <label>Last Name:</label>
-                    <div>@selectedEmployee.LastName</div>
-                </div>
-                <div class="detail-group">
-                    <label>Position:</label>
-                    <div>@selectedEmployee.Position</div>
-                </div>
-                <div class="detail-group">
-                    <label>Salary:</label>
-                    <div>@selectedEmployee.Salary</div>
-                </div>
-                <div class="detail-group">
-                    <label>Email:</label>
-                    <div>@selectedEmployee.Email</div>
-                </div>
-
-                <div class="detail-group">
-                    <label>Performance:</label>
-                    <div>@selectedEmployee.Performance</div>
-                </div>
-
-                <div class="detail-group">
-                    <label>Hiring Date:</label>
-                    <div>@selectedEmployee.DateHired</div>
-                </div>
-
-                <div class="button-group">
-                    <button class="btn btn-primary" @onclick="StartUpdate">Update Employee</button>
-                    <button class="btn btn-danger" @onclick="DeleteEmployee">Delete Employee</button>
-                </div>
-            }
-            else
-            {
-                <p>Select an employee to view details</p>
-            }
+            </div>
         </div>
     </div>
 </div>
-@code {
-    private List<Employee> employees;
-    private Employee selectedEmployee;
-    private bool isAddingNew = false;
-    private Employee newEmployee = new Employee();
-    private bool isUpdating = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        employees = await EmployeeService.GetAllEmployeesAsync();
-    }
-
-    private void SelectEmployee(Employee employee)
-    {
-        selectedEmployee = employee;
-        isAddingNew = false;
-        isUpdating = false;
-    }
-
-    private void AddNewEmployee()
-    {
-        newEmployee = new Employee();
-        isAddingNew = true;
-        selectedEmployee = null;
-        isUpdating = false;
-    }
-
-    private async Task SaveNewEmployee()
-    {
-        await EmployeeService.AddEmployeeAsync(newEmployee);
-        employees = await EmployeeService.GetAllEmployeesAsync();
-        isAddingNew = false;
-    }
-
-    private void CancelAddNew()
-    {
-        isAddingNew = false;
-    }
-
-    private void StartUpdate()
-    {
-        isUpdating = true;
-        newEmployee = new Employee
-        {
-            EmployeeID = selectedEmployee.EmployeeID,
-            FirstName = selectedEmployee.FirstName,
-            LastName = selectedEmployee.LastName,
-            Position = selectedEmployee.Position,
-            Salary = selectedEmployee.Salary,
-            Email = selectedEmployee.Email,
-            DateHired = selectedEmployee.DateHired,
-            DateDeparted = selectedEmployee.DateDeparted
-
-        };
-    }
-
-    private async Task DeleteEmployee()
-    {
-        if (selectedEmployee != null)
-        {
-            await EmployeeService.DeleteEmployeeAsync(selectedEmployee.EmployeeID);
-            employees = await EmployeeService.GetAllEmployeesAsync();
-            selectedEmployee = null;
-        }
-    }
-}
