@@ -10,7 +10,7 @@
 <div class="employee-page">
     <div class="header">
         <h3>Employee Management</h3>
-        <button class="btn btn-primary" @onclick="AddNewEmployee">
+        <button type="button" class="btn btn-primary logout" @onclick="GoHome">
             Log out
         </button>
     </div>
@@ -180,9 +180,28 @@
                     </div>
                 </div>
 
+
+                <Modal @bind-Visible="showDeleteDialog">
+                    <ModalContent>
+                        <ModalHeader>
+                            <ModalTitle>Confirm delete</ModalTitle>
+                            <CloseButton />
+                        </ModalHeader>
+                        <ModalBody>
+                            Are you sure you want to delete
+                            <strong>@($"{selectedEmployee?.FirstName} {selectedEmployee?.LastName}")</strong>?
+                            This action can’t be undone.
+                        </ModalBody>
+                        <div class="modal-footer">
+                            <button class="btn btn-edit" @onclick="CloseDeleteDialog">Cancel</button>
+                            <button class="btn btn-delete" @onclick="DeleteEmployeeConfirmed">Delete</button>
+                        </div>
+                    </ModalContent>
+                </Modal>
+
                 <div class="action-button">
                     <button class="btn btn-edit" @onclick="StartUpdate">Edit</button>
-                    <button class="btn btn-delete" @onclick="DeleteEmployee">Delete</button>
+                    <button class="btn btn-delete" @onclick="OpenDeleteDialog">Delete</button>
                 </div>
             }
             else
@@ -211,6 +230,11 @@
     {
         employees = await EmployeeService.GetAllEmployeesAsync();
     }
+
+    private void GoHome()
+{
+    Nav.NavigateTo("/", forceLoad: false, replace: true);
+}
 
     private void SelectEmployee(Employee employee)
     {
@@ -269,4 +293,23 @@
             selectedEmployee = null;
         }
     }
+
+    private bool showDeleteDialog;
+
+    private void OpenDeleteDialog()
+    {
+        if (selectedEmployee is null) return;
+        showDeleteDialog = true;
+    }
+    private void CloseDeleteDialog() => showDeleteDialog = false;
+
+    private async Task DeleteEmployeeConfirmed()
+    {
+        if (selectedEmployee is null) return;
+        await EmployeeService.DeleteEmployeeAsync(selectedEmployee.EmployeeID);
+        employees = await EmployeeService.GetAllEmployeesAsync();
+        selectedEmployee = null;
+        showDeleteDialog = false;
+    }
+
 }
