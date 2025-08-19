@@ -1,4 +1,4 @@
-﻿@page "/Employees"  
+@page "/Employees"  
 @using System.Globalization
 @using OOP_Group_Final_Project
 @using OOP_Group_Final_Project.Services
@@ -10,8 +10,7 @@
 <div class="employee-page">
     <div class="header">
         <h3>Employee Management</h3>
-        <button type="button" class="btn btn-primary logout" @onclick="GoHome">
-            Log out
+      
         </button>
     </div>
 
@@ -56,6 +55,20 @@
 
         <!-- Display Employee Details -->
         <div class="employee-details">
+            @if (!isPayTypeSelected)
+            {
+                <div class="form-group">
+                    <h3>Employee Pay Type</h3>
+                    <button class="btn btn-primary" @onclick="AddNewSalaryEmployee">
+                        Salary Employee
+                    </button>
+
+                    <button class="btn btn-primary" @onclick="AddNewHourlyEmployee">
+                        Hourly Employee
+                    </button>
+                </div>
+            }
+
             @if (isAddingNew)
             {
                 <h4>Add New Employee</h4>
@@ -90,7 +103,7 @@
                             </div>
                             <div class="detail-group">
                                 <label>Salary</label>
-                                <InputNumber TValue="decimal" @bind-Value="newEmployee.Salary" class="form-control" />
+                                <InputNumber TValue="decimal" @bind-Value="newEmployee.Pay" class="form-control" />
                             </div>
                         </div>
                     </div>
@@ -146,6 +159,7 @@
                             <div>@selectedEmployee.Email</div>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="section">
@@ -213,11 +227,12 @@
 </div>
 
 @code {
-    private List<Employee>? employees;
-    private Employee? selectedEmployee;
+    private List<Employee> employees;
+    private Employee selectedEmployee = null;
     private bool isAddingNew = false;
-    private Employee newEmployee = new Employee();
+    private Employee newEmployee;
     private bool isUpdating = false;
+
     private string searchTerm = string.Empty; //added search bar
     private IEnumerable<Employee> filteredEmployees =>
         string.IsNullOrWhiteSpace(searchTerm) || employees is null
@@ -241,17 +256,37 @@
         selectedEmployee = employee;
         isAddingNew = false;
         isUpdating = false;
+        isPayTypeSelected = true;
     }
 
-    private void AddNewEmployee()
+    private void StartAddEmployee()
     {
-        newEmployee = new Employee
-        {
-            DateHired = DateTime.Today
-        };
+        isAddingNew = false;
+        selectedEmployee = null;
+        isUpdating = false;
+        isPayTypeSelected = false;
+    }
+
+    private void AddNewSalaryEmployee()
+    {
+        newEmployee = new Salaried();
         isAddingNew = true;
         selectedEmployee = null;
         isUpdating = false;
+        isPayTypeSelected = true;
+        payType = "salary";
+        DateHired = DateTime.Today
+    }
+
+    private void AddNewHourlyEmployee()
+    {
+        newEmployee = new FullTime();
+        isAddingNew = true;
+        selectedEmployee = null;
+        isUpdating = false;
+        isPayTypeSelected = true;
+        payType = "hourly";
+        DateHired = DateTime.Today
     }
 
     private async Task SaveNewEmployee()
@@ -269,19 +304,37 @@
     private void StartUpdate()
     {
         isUpdating = true;
-        newEmployee = new Employee
+        if (selectedEmployee.Pay > 1000)
         {
-            EmployeeID = selectedEmployee.EmployeeID,
-            FirstName = selectedEmployee.FirstName,
-            LastName = selectedEmployee.LastName,
-            Position = selectedEmployee.Position,
-            Salary = selectedEmployee.Salary,
-            Email = selectedEmployee.Email,
-            Performance = selectedEmployee.Performance,
-            DateHired = selectedEmployee.DateHired,
-            DateDeparted = selectedEmployee.DateDeparted
 
-        };
+            Salaried newEmployee = new Salaried()
+            {
+                EmployeeID = selectedEmployee.EmployeeID,
+                FirstName = selectedEmployee.FirstName,
+                LastName = selectedEmployee.LastName,
+                Position = selectedEmployee.Position,
+                Pay = selectedEmployee.GetPay(),
+                Email = selectedEmployee.Email,
+                DateHired = selectedEmployee.DateHired,
+                DateDeparted = selectedEmployee.DateDeparted
+
+            };
+        }
+        else
+        {
+            FullTime newEmployee = new FullTime()
+            {
+                EmployeeID = selectedEmployee.EmployeeID,
+                FirstName = selectedEmployee.FirstName,
+                LastName = selectedEmployee.LastName,
+                Position = selectedEmployee.Position,
+                Pay = selectedEmployee.GetPay(),
+                Email = selectedEmployee.Email,
+                DateHired = selectedEmployee.DateHired,
+                DateDeparted = selectedEmployee.DateDeparted
+
+            };
+        }
     }
 
     private async Task DeleteEmployee()
