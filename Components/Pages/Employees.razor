@@ -148,63 +148,160 @@
             }
             else if (selectedEmployee != null)
             {
-                <div class="section">
-                    <h4>Identity</h4>
-                    <div class="detail-grid">
-                        <div class="detail-group">
-                            <label>First Name</label>
-                            <div>@selectedEmployee.FirstName</div>
+                @if (isUpdating)
+                {
+                    <div class="section">
+                        <h4>Identity</h4>
+                        <div class="detail-grid">
+                            <div class="detail-group">
+                                <label>First Name</label>
+                                <div>
+                                    Current: @selectedEmployee.FirstName
+                                    <InputText @bind-Value="selectedEmployee.FirstName" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="detail-group">
+                                <label>Last Name</label>
+                                <div>
+                                    Current: @selectedEmployee.LastName
+                                    <InputText @bind-Value="selectedEmployee.LastName" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="detail-group" style="grid-column:1/-1">
+                                <label>Email</label>
+                                <div>
+                                    Current: @selectedEmployee.Email
+                                    <InputText @bind-Value="selectedEmployee.Email" class="form-control" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="detail-group">
-                            <label>Last Name</label>
-                            <div>@selectedEmployee.LastName</div>
-                        </div>
-                        <div class="detail-group" style="grid-column:1/-1">
-                            <label>Email</label>
-                            <div>@selectedEmployee.Email</div>
+
+                    </div>
+
+                    <div class="section">
+                        <h4>Role and Pay</h4>
+                        <div class="detail-grid">
+                            <div class="detail-group">
+                                <label>Position</label>
+                                <div>
+                                    Current: @selectedEmployee.Position
+                                    <InputText @bind-Value="selectedEmployee.Position" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="detail-group">
+                                @if (selectedEmployee.Pay > 1000)
+                                {
+                                    <label>Salary</label>
+                                }
+                                else
+                                {
+                                    <label>Wage</label>
+                                }
+                                <div>
+                                    Current: @selectedEmployee.Pay.ToString("C0", CultureInfo.CurrentCulture)
+                                    <InputNumber TValue="decimal" @bind-Value="selectedEmployee.Pay" class="form-control" />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                </div>
-
-                <div class="section">
-                    <h4>Role and Pay</h4>
-                    <div class="detail-grid">
-                        <div class="detail-group">
-                            <label>Position</label>
-                            <div>@selectedEmployee.Position</div>
-                        </div>
-                        <div class="detail-group">
-                            @if (selectedEmployee.Pay > 1000)
-                            {
-                                <label>Salary</label>
-                            }
-                            else
-                            {
-                                <label>Wage</label>
-                            }
-                            <div>@selectedEmployee.Pay.ToString("C0", CultureInfo.CurrentCulture)</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h4>Dates and Performance</h4>
-                    <div class="detail-grid">
-                        <div class="detail-group">
-                            <label>Hiring Date</label>
-                            <div>@selectedEmployee.DateHired.ToString("yyyy-MM-dd")</div>
-                        </div>
-                        <div class="detail-group">
-                            <label>Departed Date</label>
-                            <div>@(selectedEmployee.DateDeparted?.ToString("yyyy-MM-dd") ?? "—")</div>
-                        </div>
-                        <div class="detail-group" style="grid-column:1/-1">
-                            <label>Performance</label>
-                            <div>@selectedEmployee.Performance</div>
+                    <div class="section">
+                        <h4>Dates and Performance</h4>
+                        <div class="detail-grid">
+                            <div class="detail-group">
+                                <label>Hiring Date</label>
+                                <div>
+                                    Current: @selectedEmployee.DateHired.ToString("yyyy-MM-dd")
+                                    <DatePicker TValue="DateTime"
+                                            @bind-Date="selectedEmployee.DateHired"
+                                            AutoClose="true"
+                                            Editable="false"
+                                            Max="@DateTime.Today" />
+                                </div>
+                            </div>
+                            <div class="detail-group">
+                                <label>Departed Date</label>
+                                <div>
+                                    Current: @(selectedEmployee.DateDeparted?.ToString("yyyy-MM-dd") ?? "—")
+                                    <DatePicker TValue="DateTime?"
+                                                @bind-Date="selectedEmployee.DateDeparted"
+                                                AutoClose="true"
+                                                Editable="false"
+                                                Min="@(selectedEmployee.DateHired == default ? null : new DateTime?(selectedEmployee.DateHired))"
+                                                Clearable="true" />
+                                </div>
+                            </div>
+                            <div class="detail-group" style="grid-column:1/-1">
+                                <label>Performance</label>
+                                <div>
+                                    Current: @selectedEmployee.Performance 
+                                    <InputNumber TValue="int" @bind-Value="selectedEmployee.Performance" class="form-control" />
+                                </div>
+                                
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <div class="section">
+                        <h4>Identity</h4>
+                        <div class="detail-grid">
+                            <div class="detail-group">
+                                <label>First Name</label>
+                                <div>@selectedEmployee.FirstName</div>
+                            </div>
+                            <div class="detail-group">
+                                <label>Last Name</label>
+                                <div>@selectedEmployee.LastName</div>
+                            </div>
+                            <div class="detail-group" style="grid-column:1/-1">
+                                <label>Email</label>
+                                <div>@selectedEmployee.Email</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="section">
+                        <h4>Role and Pay</h4>
+                        <div class="detail-grid">
+                            <div class="detail-group">
+                                <label>Position</label>
+                                <div>@selectedEmployee.Position</div>
+                            </div>
+                            <div class="detail-group">
+                                @if (selectedEmployee.Pay > 1000)
+                                {
+                                    <label>Salary</label>
+                                }
+                                else
+                                {
+                                    <label>Wage</label>
+                                }
+                                <div>@selectedEmployee.Pay.ToString("C0", CultureInfo.CurrentCulture)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h4>Dates and Performance</h4>
+                        <div class="detail-grid">
+                            <div class="detail-group">
+                                <label>Hiring Date</label>
+                                <div>@selectedEmployee.DateHired.ToString("yyyy-MM-dd")</div>
+                            </div>
+                            <div class="detail-group">
+                                <label>Departed Date</label>
+                                <div>@(selectedEmployee.DateDeparted?.ToString("yyyy-MM-dd") ?? "—")</div>
+                            </div>
+                            <div class="detail-group" style="grid-column:1/-1">
+                                <label>Performance</label>
+                                <div>@selectedEmployee.Performance</div>
+                            </div>
+                        </div>
+                    </div>
+                }
 
 
                 <Modal @bind-Visible="showDeleteDialog">
@@ -226,8 +323,16 @@
                 </Modal>
 
                 <div class="action-button">
-                    <button class="btn btn-edit" @onclick="StartUpdate">Edit</button>
-                    <button class="btn btn-delete" @onclick="OpenDeleteDialog">Delete</button>
+                    @if (!isUpdating)
+                    {
+                        <button class="btn btn-edit" @onclick="StartUpdate">Edit</button>
+                        <button class="btn btn-delete" @onclick="OpenDeleteDialog">Delete</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-edit" @onclick="SaveUpdate">Save</button>
+                        <button class="btn btn-delete" @onclick="CancelUpdate">Cancel</button>
+                    }
                 </div>
             }
             else
@@ -246,6 +351,8 @@
     private bool isUpdating = false;
     private bool isPayTypeSelected = true;
     private string payType = "salary";
+    Salaried salaryEmployee = new Salaried();
+    FullTime fullTimeEmployee = new FullTime();
 
     private string searchTerm = string.Empty; //added search bar
     private IEnumerable<Employee> filteredEmployees =>
@@ -319,34 +426,49 @@
         if (selectedEmployee.Pay > 1000)
         {
 
-            Salaried newEmployee = new Salaried()
+            Salaried salaryEmployee = new Salaried()
             {
                 EmployeeID = selectedEmployee.EmployeeID,
                 FirstName = selectedEmployee.FirstName,
                 LastName = selectedEmployee.LastName,
                 Position = selectedEmployee.Position,
-                Pay = selectedEmployee.GetPay(),
+                Pay = selectedEmployee.Pay,
+                Salary = selectedEmployee.Pay,
                 Email = selectedEmployee.Email,
                 DateHired = selectedEmployee.DateHired,
                 DateDeparted = selectedEmployee.DateDeparted
 
             };
+            selectedEmployee = salaryEmployee;
         }
         else
         {
-            FullTime newEmployee = new FullTime()
+            FullTime fullTimeEmployee = new FullTime()
             {
                 EmployeeID = selectedEmployee.EmployeeID,
                 FirstName = selectedEmployee.FirstName,
                 LastName = selectedEmployee.LastName,
                 Position = selectedEmployee.Position,
-                Pay = selectedEmployee.GetPay(),
+                Pay = selectedEmployee.Pay,
+                Wage = selectedEmployee.Pay,
                 Email = selectedEmployee.Email,
                 DateHired = selectedEmployee.DateHired,
                 DateDeparted = selectedEmployee.DateDeparted
 
             };
+            selectedEmployee = fullTimeEmployee;
         }
+    }
+
+    private async void SaveUpdate()
+    {
+        isUpdating = false;
+        await EmployeeService.UpdateEmployeeAsync(selectedEmployee);
+    }
+
+    private void CancelUpdate()
+    {
+        isUpdating = false;
     }
 
     private async Task DeleteEmployee()
