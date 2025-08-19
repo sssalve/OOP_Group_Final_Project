@@ -8,7 +8,7 @@
 <div class="employee-page">
     <div class="header">
         <h3>Employee Management</h3>
-        <button class="btn btn-primary" @onclick="AddNewEmployee">
+        <button class="btn btn-primary" @onclick="StartAddEmployee">
             Add New Employee
         </button>
     </div>
@@ -37,6 +37,20 @@
 
         <!-- Display Employee Details -->
         <div class="employee-details">
+            @if (!isPayTypeSelected)
+            {
+                <div class="form-group">
+                    <h3>Employee Pay Type</h3>
+                    <button class="btn btn-primary" @onclick="AddNewSalaryEmployee">
+                        Salary Employee
+                    </button>
+
+                    <button class="btn btn-primary" @onclick="AddNewHourlyEmployee">
+                        Hourly Employee
+                    </button>
+                </div>
+            }
+
             @if (isAddingNew)
             {
                 <h4>Add New Employee</h4>
@@ -56,10 +70,21 @@
                         <label>Position:</label>
                         <InputText @bind-Value="newEmployee.Position" class="form-control" />
                     </div>
-                    <div class="form-group">
-                        <label>Salary:</label>
-                        <InputNumber @bind-Value="newEmployee.Salary" class="form-control" />
-                    </div>
+                    @if (payType == "salary")
+                    {
+                        <div class="form-group">
+                            <label>Salary:</label>
+                            <InputNumber @bind-Value="newEmployee.Pay" class="form-control" />
+                        </div>
+                    }
+                    @if (payType == "hourly")
+                    {
+                        <div class="form-group">
+                            <label>Wage:</label>
+                            <InputNumber @bind-Value="newEmployee.Pay" class="form-control" />
+                        </div>
+                    }
+                    
                     <div class="form-group">
                         <label>Email:</label>
                         <InputText @bind-Value="newEmployee.Email" class="form-control" />
@@ -95,10 +120,20 @@
                     <label>Position:</label>
                     <div>@selectedEmployee.Position</div>
                 </div>
-                <div class="detail-group">
-                    <label>Salary:</label>
-                    <div>@selectedEmployee.Salary</div>
-                </div>
+                @if (selectedEmployee.Pay > 1000)
+                {
+                    <div class="detail-group">
+                        <label>Salary:</label>
+                        <div>@selectedEmployee.Pay</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="detail-group">
+                        <label>Wage:</label>
+                        <div>@selectedEmployee.Pay</div>
+                    </div>
+                }
                 <div class="detail-group">
                     <label>Email:</label>
                     <div>@selectedEmployee.Email</div>
@@ -128,10 +163,12 @@
 </div>
 @code {
     private List<Employee> employees;
-    private Employee selectedEmployee;
+    private Employee selectedEmployee = null;
     private bool isAddingNew = false;
-    private Employee newEmployee = new Employee();
+    private Employee newEmployee;
     private bool isUpdating = false;
+    private bool isPayTypeSelected = true;
+    private string payType;
 
     protected override async Task OnInitializedAsync()
     {
@@ -143,14 +180,35 @@
         selectedEmployee = employee;
         isAddingNew = false;
         isUpdating = false;
+        isPayTypeSelected = true;
     }
 
-    private void AddNewEmployee()
+    private void StartAddEmployee()
     {
-        newEmployee = new Employee();
+        isAddingNew = false;
+        selectedEmployee = null;
+        isUpdating = false;
+        isPayTypeSelected = false;
+    }
+
+    private void AddNewSalaryEmployee()
+    {
+        newEmployee = new Salaried();
         isAddingNew = true;
         selectedEmployee = null;
         isUpdating = false;
+        isPayTypeSelected = true;
+        payType = "salary";
+    }
+
+    private void AddNewHourlyEmployee()
+    {
+        newEmployee = new FullTime();
+        isAddingNew = true;
+        selectedEmployee = null;
+        isUpdating = false;
+        isPayTypeSelected = true;
+        payType = "hourly";
     }
 
     private async Task SaveNewEmployee()
@@ -168,18 +226,37 @@
     private void StartUpdate()
     {
         isUpdating = true;
-        newEmployee = new Employee
+        if (selectedEmployee.Pay > 1000)
         {
-            EmployeeID = selectedEmployee.EmployeeID,
-            FirstName = selectedEmployee.FirstName,
-            LastName = selectedEmployee.LastName,
-            Position = selectedEmployee.Position,
-            Salary = selectedEmployee.Salary,
-            Email = selectedEmployee.Email,
-            DateHired = selectedEmployee.DateHired,
-            DateDeparted = selectedEmployee.DateDeparted
+            Salaried newEmployee = new Salaried()
+            {
+                EmployeeID = selectedEmployee.EmployeeID,
+                FirstName = selectedEmployee.FirstName,
+                LastName = selectedEmployee.LastName,
+                Position = selectedEmployee.Position,
+                Pay = selectedEmployee.GetPay(),
+                Email = selectedEmployee.Email,
+                DateHired = selectedEmployee.DateHired,
+                DateDeparted = selectedEmployee.DateDeparted
 
-        };
+            };
+        }
+        else
+        {
+            FullTime newEmployee = new FullTime()
+            {
+                EmployeeID = selectedEmployee.EmployeeID,
+                FirstName = selectedEmployee.FirstName,
+                LastName = selectedEmployee.LastName,
+                Position = selectedEmployee.Position,
+                Pay = selectedEmployee.GetPay(),
+                Email = selectedEmployee.Email,
+                DateHired = selectedEmployee.DateHired,
+                DateDeparted = selectedEmployee.DateDeparted
+
+            };
+        }
+        
     }
 
     private async Task DeleteEmployee()
