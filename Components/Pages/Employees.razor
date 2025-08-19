@@ -10,8 +10,6 @@
 <div class="employee-page">
     <div class="header">
         <h3>Employee Management</h3>
-      
-        </button>
     </div>
 
     <div class="employee-container">
@@ -50,7 +48,7 @@
                 </ul>
             }
 
-            <button class="btn btn-primary" style="width:100%; margin-top:10px" @onclick="AddNewEmployee">Add</button>
+            <button class="btn btn-primary" style="width:100%; margin-top:10px" @onclick="StartAddEmployee">Add</button>
         </div>
 
         <!-- Display Employee Details -->
@@ -102,7 +100,14 @@
                                 <InputText @bind-Value="newEmployee.Position" class="form-control" />
                             </div>
                             <div class="detail-group">
-                                <label>Salary</label>
+                                @if (payType == "salary")
+                                {
+                                    <label>Salary</label>
+                                }
+                                else
+                                {
+                                    <label>Wage</label>
+                                }
                                 <InputNumber TValue="decimal" @bind-Value="newEmployee.Pay" class="form-control" />
                             </div>
                         </div>
@@ -170,8 +175,15 @@
                             <div>@selectedEmployee.Position</div>
                         </div>
                         <div class="detail-group">
-                            <label>Salary</label>
-                            <div>@selectedEmployee.Salary.ToString("C0", CultureInfo.CurrentCulture)</div>
+                            @if (selectedEmployee.Pay > 1000)
+                            {
+                                <label>Salary</label>
+                            }
+                            else
+                            {
+                                <label>Wage</label>
+                            }
+                            <div>@selectedEmployee.Pay.ToString("C0", CultureInfo.CurrentCulture)</div>
                         </div>
                     </div>
                 </div>
@@ -232,6 +244,8 @@
     private bool isAddingNew = false;
     private Employee newEmployee;
     private bool isUpdating = false;
+    private bool isPayTypeSelected = true;
+    private string payType = "salary";
 
     private string searchTerm = string.Empty; //added search bar
     private IEnumerable<Employee> filteredEmployees =>
@@ -247,9 +261,9 @@
     }
 
     private void GoHome()
-{
-    Nav.NavigateTo("/", forceLoad: false, replace: true);
-}
+    {
+        Nav.NavigateTo("/", forceLoad: false, replace: true);
+    }
 
     private void SelectEmployee(Employee employee)
     {
@@ -275,7 +289,6 @@
         isUpdating = false;
         isPayTypeSelected = true;
         payType = "salary";
-        DateHired = DateTime.Today
     }
 
     private void AddNewHourlyEmployee()
@@ -286,7 +299,6 @@
         isUpdating = false;
         isPayTypeSelected = true;
         payType = "hourly";
-        DateHired = DateTime.Today
     }
 
     private async Task SaveNewEmployee()
