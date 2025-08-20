@@ -1,6 +1,7 @@
-﻿namespace OOP_Group_Final_Project
+﻿
+namespace OOP_Group_Final_Project
 {
-    public class Employee
+    public abstract class Employee
     {
         public int EmployeeID { get; set; }
 
@@ -10,7 +11,7 @@
 
         public string Position { get; set; } = string.Empty;
 
-        public decimal Salary { get; set; }
+        public decimal Pay { get; set; }
 
         public string Email { get; set; } = string.Empty;
 
@@ -18,5 +19,6 @@
         public DateTime DateHired { get; set; }
         public DateTime? DateDeparted { get; set; }
 
+        public abstract decimal GetPay(decimal period = 0);
     }
 }
