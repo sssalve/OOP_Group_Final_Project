@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace OOP_Group_Final_Project.Services
 {
+
+	// iterface for schedule service
 	public interface IScheduleService
 	{
 		Task<List<Schedule>> GetSchedulesAsync();

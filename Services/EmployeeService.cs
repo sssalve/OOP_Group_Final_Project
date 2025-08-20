@@ -1,7 +1,8 @@
 ﻿namespace OOP_Group_Final_Project.Services
 
 {
-    public interface IEmployeeService
+	// interface for EmployeeService
+	public interface IEmployeeService
     {
         Task<List<Employee>> GetAllEmployeesAsync();
         Task<Employee> GetEmployeeByIdAsync(int id);
