@@ -57,6 +57,9 @@
             {
                 <div class="form-group">
                     <h3>Employee Pay Type</h3>
+                    <Alert Color="Color.Danger" Visible="@(!string.IsNullOrEmpty(errorMessage))">
+                        @errorMessage
+                    </Alert>
                     <button class="btn btn-primary" @onclick="AddNewSalaryEmployee">
                         Salary Employee
                     </button>
@@ -114,7 +117,7 @@
                     </div>
 
                     <div class="section">
-                        <h4>Dates and Performance</h4>
+                        <h4>Dates</h4>
                         <div class="detail-grid">
                             <div class="detail-group">
                                 <label>Hiring Date</label>
@@ -132,10 +135,6 @@
                                             Editable="false"
                                             Min="@(newEmployee.DateHired == default ? null : new DateTime?(newEmployee.DateHired))"
                                             Clearable="true" />
-                            </div>
-                            <div class="detail-group" style="grid-column:1/-1">
-                                <label>Performance (1–5)</label>
-                                <InputNumber TValue="int" @bind-Value="newEmployee.Performance" class="form-control" />
                             </div>
                         </div>
                     </div>
@@ -206,7 +205,7 @@
                     </div>
 
                     <div class="section">
-                        <h4>Dates and Performance</h4>
+                        <h4>Dates</h4>
                         <div class="detail-grid">
                             <div class="detail-group">
                                 <label>Hiring Date</label>
@@ -230,14 +229,6 @@
                                                 Min="@(selectedEmployee.DateHired == default ? null : new DateTime?(selectedEmployee.DateHired))"
                                                 Clearable="true" />
                                 </div>
-                            </div>
-                            <div class="detail-group" style="grid-column:1/-1">
-                                <label>Performance</label>
-                                <div>
-                                    Current: @selectedEmployee.Performance 
-                                    <InputNumber TValue="int" @bind-Value="selectedEmployee.Performance" class="form-control" />
-                                </div>
-                                
                             </div>
                         </div>
                     </div>
@@ -285,7 +276,7 @@
                     </div>
 
                     <div class="section">
-                        <h4>Dates and Performance</h4>
+                        <h4>Dates</h4>
                         <div class="detail-grid">
                             <div class="detail-group">
                                 <label>Hiring Date</label>
@@ -295,10 +286,7 @@
                                 <label>Departed Date</label>
                                 <div>@(selectedEmployee.DateDeparted?.ToString("yyyy-MM-dd") ?? "—")</div>
                             </div>
-                            <div class="detail-group" style="grid-column:1/-1">
-                                <label>Performance</label>
-                                <div>@selectedEmployee.Performance</div>
-                            </div>
+         
                         </div>
                     </div>
                 }
@@ -460,10 +448,13 @@
         }
     }
 
-    private async void SaveUpdate()
+    private async Task SaveUpdate()
     {
         isUpdating = false;
         await EmployeeService.UpdateEmployeeAsync(selectedEmployee);
+        employees = await EmployeeService.GetAllEmployeesAsync();
+
+        selectedEmployee = employees.FirstOrDefault(e => e.EmployeeID == selectedEmployee.EmployeeID);
     }
 
     private void CancelUpdate()
@@ -497,6 +488,29 @@
         employees = await EmployeeService.GetAllEmployeesAsync();
         selectedEmployee = null;
         showDeleteDialog = false;
+    }
+
+    //--------------------------------------------------------------------------------------------
+
+    //added this to catch specific exception to show a message instead of crashing
+    string? errorMessage;
+    private Employee model = new Salaried { DateHired = DateTime.Today};
+    async Task SaveAsync()
+    {
+        errorMessage = null;
+
+        // 
+        try
+        {
+            // your add/update call
+            await EmployeeService.AddEmployeeAsync(model);
+            // success path...
+        }
+        catch (Exception ex)
+        {
+            // safety net if it ever slips through
+            errorMessage = ex.Message; // "error"
+        }
     }
 
 }
