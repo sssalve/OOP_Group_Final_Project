@@ -36,7 +36,7 @@
         <!-- Display Employee Details -->
         <div class="employee-details">
 
-            @if (!isPayTypeSelected)
+            @if (!isPayTypeSelected && !isUpdating)
             {
                 <div class="form-group">
                     <h3>Employee Pay Type</h3>
@@ -175,7 +175,7 @@
                     <InputText @bind-Value="newEmployee.Position" class="form-control" />
                 </div>
                 <div class="form-group">
-                        @if (selectedEmployee.Pay > 1000)
+                        @if (newEmployee.Pay > 1000)
                         {
                             <label>Salary</label>
                         }
@@ -293,6 +293,7 @@
                 Pay = selectedEmployee.Pay,
                 Salary = selectedEmployee.Pay,
                 Email = selectedEmployee.Email,
+                Performance = selectedEmployee.Performance,
                 DateHired = selectedEmployee.DateHired,
                 DateDeparted = selectedEmployee.DateDeparted
 
@@ -310,6 +311,7 @@
                 Pay = selectedEmployee.Pay,
                 Wage = selectedEmployee.Pay,
                 Email = selectedEmployee.Email,
+                Performance = selectedEmployee.Performance,
                 DateHired = selectedEmployee.DateHired,
                 DateDeparted = selectedEmployee.DateDeparted
 
