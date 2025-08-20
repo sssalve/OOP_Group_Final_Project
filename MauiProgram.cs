@@ -1,7 +1,4 @@
-﻿using Blazorise;
-using Blazorise.Bootstrap5;
-using Blazorise.Icons.FontAwesome;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using OOP_Group_Final_Project.Services;
 
 namespace OOP_Group_Final_Project
@@ -19,10 +16,6 @@ namespace OOP_Group_Final_Project
                 });
 
             builder.Services.AddMauiBlazorWebView();
-            builder.Services
-                .AddBlazorise(options => { options.Immediate = true; })
-                .AddBootstrap5Providers()
-                .AddFontAwesomeIcons();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

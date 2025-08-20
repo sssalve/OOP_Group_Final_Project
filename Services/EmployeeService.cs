@@ -20,8 +20,8 @@
             _employees.Clear();
             _employees = new List<Employee>
             {
-                new Salaried() {EmployeeID = _nextId++, FirstName = "John", LastName = "Doe", Position = "Dev", Salary = 85000, Pay = 85000, Email = "legitemail@real.com", Performance = 4, DateHired = new DateTime(2023, 09, 23), DateDeparted = null},
-                new FullTime() {EmployeeID = _nextId++, FirstName = "Jane", LastName = "Smith", Position = "Dev", Wage = 35,  Pay = 35, Email = "xXn00bDestroyerXx@gamer.com", Performance = 2, DateHired = new DateTime(2021, 01, 10), DateDeparted = new DateTime(2021, 06, 10) }
+                new() {EmployeeID = _nextId++, FirstName = "John", LastName = "Doe", Position = "Dev", Salary = 85000, Email = "legitemail@real.com", Performance = 4, DateHired = new DateTime(2023, 09, 23), DateDeparted = null},
+                new() {EmployeeID = _nextId++, FirstName = "Jane", LastName = "Smith", Position = "Dev", Salary = 85000,  Email = "xXn00bDestroyerXx@gamer.com", Performance = 2, DateHired = new DateTime(2021, 01, 10), DateDeparted = new DateTime(2021, 06, 10) }
             };
         }
 
@@ -52,46 +52,22 @@
         {
             var existing = _employees.FirstOrDefault(e => e.EmployeeID == employee.EmployeeID);
 
-            Salaried updatedSalaried = new Salaried();
-            FullTime updatedFullTime = new FullTime();
-
-            if (employee.GetType() is Salaried && existing != null)
+            if (existing != null)
             {
-                updatedSalaried.EmployeeID = employee.EmployeeID;
-                updatedSalaried.FirstName = employee.FirstName;
-                updatedSalaried.LastName = employee.LastName;
-                updatedSalaried.Position = employee.Position;
-                updatedSalaried.Pay = employee.Pay;
-                updatedSalaried.Salary = employee.Pay;
-                updatedSalaried.Email = employee.Email;
+                existing.FirstName = employee.FirstName;
+                existing.LastName = employee.LastName;
+                existing.Position = employee.Position;
+                existing.Salary = employee.Salary;
+                existing.Email = employee.Email;
                 if (employee.Performance is < 1 or > 5)
                     throw new ArgumentOutOfRangeException(nameof(employee.Performance), "Performance must be 1–5.");
                 if (employee.DateHired != default)
                 {
-                    updatedSalaried.DateHired = employee.DateHired;
+                    existing.DateHired = employee.DateHired;
                 }
-                updatedSalaried.DateDeparted = employee.DateDeparted;
-                existing = updatedSalaried;
+                existing.DateDeparted = employee.DateDeparted;
             }
-            else if (employee.GetType() is FullTime && existing != null)
-            {
-                updatedFullTime.EmployeeID = employee.EmployeeID;
-                updatedFullTime.FirstName = employee.FirstName;
-                updatedFullTime.LastName = employee.LastName;
-                updatedFullTime.Position = employee.Position;
-                updatedFullTime.Pay = employee.Pay;
-                updatedFullTime.Wage = employee.Pay;
-                updatedFullTime.Email = employee.Email;
-                if (employee.Performance is < 1 or > 5)
-                    throw new ArgumentOutOfRangeException(nameof(employee.Performance), "Performance must be 1–5.");
-                if (employee.DateHired != default)
-                {
-                    updatedFullTime.DateHired = employee.DateHired;
-                }
-                updatedFullTime.DateDeparted = employee.DateDeparted;
-                existing = updatedFullTime;
-            }
-                await Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
         public async Task DeleteEmployeeAsync(int id)
