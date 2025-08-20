@@ -1,249 +1,69 @@
-﻿/* Make the canvas actually use the background */
-html, body {
-    background: #eef2f6;
-}
-
-.employee-page {
-    max-width: 1200px;
-    margin: 24px auto;
-    padding: 20px 20px;
-    background: #eef2f6;
-}
-
-/* header */
-.header {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 18px 20px;
-    box-shadow: 0 6px 22px rgba(0,0,0,.08);
+﻿.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 .employee-container {
-    display: grid;
-    grid-template-columns: 300px 1fr;
+    display: flex;
     gap: 20px;
 }
 
-.employee-list, .employee-details {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    padding: 12px 18px;
+.employee-list {
+    width: 300px;
+    border-right: 1px solid #ddd;
+    padding-right: 20px;
 }
 
-/* search and list of employees */
-.list-search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 10px;
-    margin: 6px 6px 10px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 6px 22px rgba(0,0,0,.08);
-    border-radius: 10px;
-    background: #f8fafc;
-}
-
-    .list-search input {
-        border: none;
-        outline: none;
-        flex: 1;
-        background: transparent;
-        color: #111827;
+    .employee-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
 
-.employee-list ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-height: 70vh;
-    overflow: auto;
+    .employee-list li {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+    }
+
+        .employee-list li:hover {
+            background-color: #f5f5f5;
+        }
+
+        .employee-list li.selected {
+            background-color: #e0f7fa;
+            font-weight: bold;
+        }
+
+.employee-details {
+    flex: 1;
 }
 
-.employee-list li {
-    display: grid;
-    grid-template-columns: 40px 1fr 14px;
-    align-items: center;
+.detail-group {
+    margin-bottom: 15px;
+}
+
+    .detail-group label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+.button-group {
+    margin-top: 20px;
+    display: flex;
     gap: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    cursor: pointer;
 }
 
-    .employee-list li:hover {
-        background: #f3f4f6;
-    }
-
-    .employee-list li.selected {
-        background: #e9e5ff;
-    }
-
-.avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: #dbeafe;
-    color: #1e40af;
-    font-weight: 700;
+.form-group {
+    margin-bottom: 15px;
 }
 
-.name {
-    color: #111827;
-    font-weight: 600;
-    line-height: 1.15;
-}
-
-.sub {
-    color: #6b7280;
-    font-size: .88rem;
-}
-
-.status-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    box-shadow: 0 0 0 2px #fff;
-}
-
-    .status-dot.active { /*green for still employeed*/
-        background: #16a34a;
-    }
-
-    .status-dot.departed { /*red dot for departed */
-        background: #ca5f5f;
-    }
-
-
-/* SECTIONS / GRID */
-.section {
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-    margin-top: 12px;
-}
-
-    .section:first-child {
-        border-top: none;
-        padding-top: 0;
-        margin-top: 0;
-    }
-
-    .section h4 {
-        margin: 0 0 12px;
-        color: #111827;
-    }
-
-.detail-grid {
-    display: grid;
-    gap: 14px;
-    grid-template-columns: repeat(2, minmax(0,1fr));
-}
-
-.detail-group label {
-    color: #6b7280;
-    font-size: .9rem;
-    display: block;
-    margin-bottom: 6px;
-}
-
-.detail-group > div, .form-control {
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 10px 12px;
-}
-
-/* butons */
-.employee-page .btn {
-    padding: 10px 14px;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    cursor: pointer;
-}
-
-
-
-    .employee-page .btn.btn-primary {
-        background: #635bff ;
-        border-color: #635bff ;
-        color: #fff ;
-    }
-
-        .employee-page .btn.btn-primary:hover {
-            transform: scale(1.1);
-            background: #4b42ff
-        }
-
-    .employee-page .btn.btn-secondary {
-        background: #eef0f3;
-        color: #635bff;
-    }
-
-        .employee-page .btn.btn-secondary:hover {
-            transform: scale(1.1);
-            background: #dfe3e8;
-        }
-
-
-    .employee-page .btn.btn-edit {
-        background: #635bff;
-        margin-top: 20px 20px;
-        border-color: #635bff;
-        color: #fff;
-    }
-
-        .employee-page .btn.btn-edit:hover {
-            transform: scale(1.1);
-            background: #4b42ff
-        }
-
-    .employee-page .btn.btn-delete {
-        background: #ef4444;
-        color: #fff;
-    }
-
-        .employee-page .btn.btn-delete:hover {
-            transform: scale(1.1);
-            background: #ed2d2d;
-        }
-
-.employee-details form .button-group { 
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 16px;
-}
-
-  
-    .employee-details form .button-group.sticky { 
-        position: sticky;
-        bottom: -18px; 
-        background: #fff;
-        margin: 16px -18px -12px; 
-        padding: 12px 18px;
-        border-top: 1px solid #e5e7eb;
-        border-bottom-left-radius: 14px;
-        border-bottom-right-radius: 14px;
-    }
-
-
-.employee-details > .action-button { 
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 16px;
-}
-
-/* Responsive */
-@media (max-width:900px) {
-    .employee-container {
-        grid-template-columns: 1fr;
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
     }
 
 .modal-overlay {
