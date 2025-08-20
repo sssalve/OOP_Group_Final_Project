@@ -365,8 +365,15 @@
                     <InputText @bind-Value="newEmployee.Position" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label>Salary:</label>
-                    <InputNumber @bind-Value="newEmployee.Salary" class="form-control" />
+                        @if (payType == "salary")
+                        {
+                            <label>Salary</label>
+                        }
+                        else
+                        {
+                            <label>Wage</label>
+                        }
+                    <InputNumber @bind-Value="newEmployee.Pay" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label>Email:</label>
@@ -537,11 +544,6 @@
         
         isUpdating = false;
         StateHasChanged();
-    }
-
-    private void CancelUpdate()
-    {
-        isUpdating = false;
     }
 
     private async Task DeleteEmployee()
