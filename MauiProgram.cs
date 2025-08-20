@@ -18,9 +18,10 @@ namespace OOP_Group_Final_Project
             builder.Services.AddMauiBlazorWebView();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
-			// add services
-			builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
+            builder.Services.AddBlazorWebViewDeveloperTools();
+            // add services
+            builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
+			builder.Services.AddSingleton<IScheduleService, ScheduleService>();
 			builder.Logging.AddDebug();
 #endif
 
