@@ -125,6 +125,62 @@
             }
         </div>
     </div>
+
+@if (isUpdating)
+{
+    <div class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <h4>Editing: @(selectedEmployee?.FirstName + " " + selectedEmployee?.LastName)</h4>
+            
+            <EditForm Model="newEmployee" OnValidSubmit="UpdateEmployee">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                
+                <div class="form-group">
+                    <label>First Name:</label>
+                    <InputText @bind-Value="newEmployee.FirstName" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Last Name:</label>
+                    <InputText @bind-Value="newEmployee.LastName" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Position:</label>
+                    <InputText @bind-Value="newEmployee.Position" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Salary:</label>
+                    <InputNumber @bind-Value="newEmployee.Salary" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <InputText @bind-Value="newEmployee.Email" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Performance (1–5):</label>
+                    <InputNumber @bind-Value="newEmployee.Performance" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Hiring date:</label>
+                    <InputDate @bind-Value="newEmployee.DateHired" class="form-control" />
+                </div>
+                @if (newEmployee.DateDeparted.HasValue)
+                {
+                    <div class="form-group">
+                        <label>Departure date:</label>
+                        <InputDate @bind-Value="newEmployee.DateDeparted" class="form-control" />
+                    </div>
+                }
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelUpdate">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
 </div>
 @code {
     private List<Employee> employees;
@@ -176,10 +232,27 @@
             Position = selectedEmployee.Position,
             Salary = selectedEmployee.Salary,
             Email = selectedEmployee.Email,
+            Performance = selectedEmployee.Performance,
             DateHired = selectedEmployee.DateHired,
             DateDeparted = selectedEmployee.DateDeparted
-
         };
+    }
+
+    private async Task UpdateEmployee()
+    {
+        await EmployeeService.UpdateEmployeeAsync(newEmployee);
+        employees = await EmployeeService.GetAllEmployeesAsync();
+        
+        // update the selected employee with new data
+        selectedEmployee = employees.FirstOrDefault(e => e.EmployeeID == newEmployee.EmployeeID);
+        
+        isUpdating = false;
+        StateHasChanged();
+    }
+
+    private void CancelUpdate()
+    {
+        isUpdating = false;
     }
 
     private async Task DeleteEmployee()
